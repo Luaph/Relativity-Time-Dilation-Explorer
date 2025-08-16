@@ -13,12 +13,8 @@ Given:
 
 the program represent this équation :
 \[
-t = \sqrt{1 - \frac{2GM}{r c^2}}
+   Tdilated=√1−2GmRc2⋅Twithoutgravity
 \]
 
 ---
 
-## Installation
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/<your-username>/<your-repo>.git
