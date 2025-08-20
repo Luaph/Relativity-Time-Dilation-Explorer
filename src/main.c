@@ -1,8 +1,9 @@
-#include "DG.h"
-#include "DC.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <math.h>
 #include <raylib.h>
+#include "simulation.h"
+#include "hud.h"
 
 Camera camera = {
 	.position = (Vector3){ 10.0f, 10.0f, 10.0f },
@@ -12,52 +13,33 @@ Camera camera = {
 	.projection = CAMERA_PERSPECTIVE,
 };
 
-int main(int argc, char **argv)
+int main(void)
 {
-	char *end;
-	double r, M, v;
-
+	Simulation sim;
+	SimInit(&sim, 5.9722e24);
 	InitWindow(800, 800, "RG");
-	SetTargetFPS(144);
-
-	while (WindowShouldClose() == false)
-	{
+	SetTargetFPS(60);
+	while (!WindowShouldClose()) {
+		float dt = GetFrameTime();
+		static int frame = 0; frame++;
+		if ((frame & 30) == 0) {
+			SetWindowTitle(TextFormat("RG (frame %d)", frame));
+		}
+		if (frame % 120 == 0) {
+			printf("DEBUG frame=%d Rs=%e r=%e f=%f Tstep=%f\n", frame, sim.Rs, sim.r, sim.f, dt);
+			fflush(stdout);
+		}
+		SimHandleInput(&sim, dt);
+		SimUpdatePhysics(&sim, dt);
 		BeginDrawing();
-		BeginMode3D(camera);
 		ClearBackground(BLACK);
+		BeginMode3D(camera);
 		DrawGrid(10, 1);
-
 		EndMode3D();
+		DrawSimulationHUD(&sim, dt);
+		DrawFPS(10, GetScreenHeight() - 30);
 		EndDrawing();
 	}
-
 	CloseWindow();
-	if (argc == 3)
-	{
-		end = 0;
-		r = strtod(argv[1], &end);
-		if (*end != '\0')
-			printf("%s", "First argument is not valid");
-		M = strtod(argv[2], &end);
-		if (*end != '\0')
-			printf("%s", "Second argument is not valid");
-		printf("%.20f\n", DG(r, M));
-	}
-	else if (argc == 4)
-	{
-		end = 0;
-		r = strtod(argv[1], &end);
-		if (*end != '\0')
-			printf("%s", "First argument is not valid");
-		M = strtod(argv[2], &end);
-		if (*end != '\0')
-			printf("%s", "Second argument is not valid");
-		v = strtod(argv[3], &end);
-		if (*end != '\0')
-			printf("%s", "Third argument is not valid");
-		printf("%.20f\n", DC(r, M, v));
-	}
-	else
-		printf("Please read the github README to understand how to use this program\n");
-	return (0);
+	return 0;
 }

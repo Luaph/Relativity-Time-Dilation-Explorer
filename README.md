@@ -1,67 +1,75 @@
-# Gravitational Time Dilation Calculator (WIP)
+# Relativity Time Dilation Explorer (WIP)
 
-> Status: **Work In Progress** – Core equations are implemented. A real‑time interactive spacetime visualization layer is under active development. This README is intentionally minimal until the first visual MVP is complete.
+> Interactive real‑time sandbox for visualizing how gravitational and velocity (special relativistic) effects slow proper time relative to a distant coordinate clock. (Formerly "Gravitational Time Dilation Calculator").
 
-## What This Project Will Become
-An educational sandbox to explore General + Special Relativity time dilation effects around a single (non‑rotating) mass:
-- Gravitational time dilation (Schwarzschild metric factor)
-- Optional velocity (special relativity) time dilation combined in real time
-- Planned: interactive controls to adjust mass, radius, velocity
-- Planned: deformable spacetime grid (visual warp) + color mapping of local time rate
-- Planned: orbit mode (auto circular velocity) vs manual velocity
-- Planned: on‑screen display of formulas with live substituted values
-- Planned: rings for notable radii (Schwarzschild radius, photon sphere, ISCO)
+## Current State (Interactive Prototype)
+The program opens a raylib window and continuously simulates a single, non‑rotating mass. You can:
 
-## Current Capabilities (Early)
-- CLI computation of gravitational time dilation given `r` and `M`
-- Optional inclusion of velocity factor when a third argument is passed
-- Basic raylib window created (visual layer placeholder; not final)
+- Adjust mass (W/S keys) – scales the Schwarzschild radius Rs.
+- Move radial position r (Q inward, E outward) – approaches or recedes from the horizon.
+- Change velocity fraction f = v/c (A decrease, D increase) – adds special relativity time dilation.
+- Observe live values: Rs, r, f, gravitational factor Tg, velocity factor Tv, combined factor T = Tg*Tv, accumulated coordinate time, accumulated proper time, frame dt.
 
-## Inputs (Current CLI Mode)
-- **r** – radial distance from mass center (meters)
-- **M** – mass (kilograms)
-- **v** – (optional) velocity (m/s) for SR factor (currently treated directly, not as a fraction; future UI will clarify)
+The HUD updates every frame; proper time accumulates slower than coordinate time according to the combined factor.
 
-## Output Meaning
-- Value near **1.0** → negligible dilation (far from mass / low velocity)
-- Value approaching **0** → extreme dilation (approaching Schwarzschild radius)
+### Why The Factors
+- Tg = sqrt(1 - 2GM/(r c^2))   (static observer gravitational time dilation)
+- Tv = sqrt(1 - f^2)           (special relativity; f = v/c)
+- T  = Tg * Tv                  (independent contributions multiplied under current assumptions)
 
-## Core Equations (Implemented)
-If 2 arguments (`r`, `M`):
-\[\Delta t' = \Delta t \sqrt{1 - \tfrac{2GM}{r c^2}}\]
+### Safety Constraints
+- r is clamped to r >= (1 + ε) * Rs to keep the square root argument positive (ε = 1e-4).
+- f is clamped to f <= f_max = 0.99 to avoid floating point overshoot beyond light speed.
 
-If 3 arguments (`r`, `M`, `v`):
-\[\Delta t' = \Delta t \sqrt{1 - \tfrac{2GM}{r c^2}} \cdot \sqrt{1 - \tfrac{v^2}{c^2}}\]
+## Build & Run
 
-Constants:
-- \( G = 6.67430 \times 10^{-11}\,\text{m}^3/\text{kg}/\text{s}^2 \)
-- \( c = 299,792,458\,\text{m/s} \)
+Assumes raylib is installed at `C:/raylib/raylib` (headers in `src`, libs built). Edit the Makefile if your path differs.
 
-## Temporary Usage (Until Interactive Mode Exists)
-1. Build with the provided Makefile (e.g. `mingw32-make game` or through VS Code task).
-2. Run the produced executable with:
-  - `program r M`  (gravitational only)
-  - `program r M v` (gravitational + velocity)
-
-Example (placeholder, adjust executable name):
+Build (VS Code task or manually):
 ```
-game.exe 7000000 5.972e24
-game.exe 7000000 5.972e24 1000
+mingw32-make
 ```
 
-## Roadmap Snapshot
-1. Document physics & visualization mapping
-2. Replace helper grid with custom deformable mesh
-3. Real-time parameter controls (mass, radius, velocity)
-4. Proper time accumulation (local vs distant clock)
-5. Visual rings & color gradient for dilation
-6. Optimization & polish
+Run the produced executable (default name `time_dilation.exe`):
+```
+./time_dilation.exe
+```
 
-## Accuracy & Scope Note
-Initial version models only a static, non-rotating mass (Schwarzschild). No frame dragging, no multiple masses, no lensing—those may appear later. Visual warp is an educational approximation, not a literal embedding diagram.
+## Controls Summary
+| Key | Action |
+|-----|--------|
+| W / S | Decrease / Increase mass |
+| Q / E | Move radius inward / outward (scales proportionally) |
+| A / D | Decrease / Increase velocity fraction f |
+| ESC   | Quit |
+
+## Code Structure
+- `src/simulation.c` / `include/simulation.h` – Simulation state, input handling, physics update.
+- `src/hud.c` / `include/hud.h` – On‑screen statistics panel.
+- `src/DG.c` / `include/DG.h` – Gravitational factor Tg.
+- `src/DC.c` / `include/DC.h` – Combined factor helper (not yet heavily used in loop).
+- `src/constants.c` / `include/constants.h` – Physical constants (c, G).
+- `src/mapping.c` – Placeholder for upcoming deformable spacetime mesh (WarpGrid scaffold).
+- `src/main.c` – Orchestrates frame loop (input → physics → render).
+
+## Planned Next Features
+1. Replace `DrawGrid` with custom deformable mesh warped by (1 - Tg) or similar mapping.
+2. Color mapping of dilation intensity.
+3. Rings for notable radii (Rs, photon sphere, optional ISCO marker).
+4. Orbit mode: auto set f to local circular orbital velocity.
+5. Reset & preset hotkeys (Earth mass, Solar mass, Near‑horizon, etc.).
+6. Display lost-time metric (coordinate time - proper time) and average dilation.
+7. Performance cleanup (update mesh only when parameters change).
+
+## Physics Scope & Limitations
+Currently models only the Schwarzschild exterior solution (static, non‑rotating, uncharged mass). No frame dragging (Kerr), no lensing visuals, no tidal forces, no multiple masses. Visual warp (when added) will be an educational embedding diagram approximation, not a fully accurate spacetime rendering.
+
+## Contributing / Extending
+Ideas welcome: mesh shaders, color palettes, educational overlays (derivations, formula substitution). Keep modules focused (simulation vs rendering vs UI) for maintainability.
 
 ## License / Attribution
-Uses [raylib](https://www.raylib.com/) (Copyright Ramon Santamaria & contributors). Equations derived from standard GR/SR textbook forms (public domain physics).
+- Uses [raylib](https://www.raylib.com/).
+- Standard GR/SR equations (public domain physics).
 
 ---
-WIP notice: This file will be expanded after the first interactive prototype. Frequent pushes may leave this README slightly behind code reality.
+This README reflects the current interactive build; it will evolve as visualization features land.

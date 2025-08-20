@@ -1,9 +1,8 @@
 #ifndef DG_H
 #define DG_H
 
-extern const double c;
-extern const double G;
+#include "constants.h"
 
 double DG(double r, double M);
 
-#endif
+#endif // DG_H
