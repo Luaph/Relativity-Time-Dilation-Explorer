@@ -1,6 +1,3 @@
-// simulation.h
-// Encapsulates the simulation state and update logic.
-
 #ifndef SIMULATION_H
 #define SIMULATION_H
 

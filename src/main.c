@@ -19,13 +19,16 @@ int main(void)
 	SimInit(&sim, 5.9722e24);
 	InitWindow(800, 800, "RG");
 	SetTargetFPS(60);
-	while (!WindowShouldClose()) {
+	while (!WindowShouldClose())
+	{
 		float dt = GetFrameTime();
 		static int frame = 0; frame++;
-		if ((frame & 30) == 0) {
+		if ((frame & 30) == 0)
+		{
 			SetWindowTitle(TextFormat("RG (frame %d)", frame));
 		}
-		if (frame % 120 == 0) {
+		if (frame % 120 == 0)
+		{
 			printf("DEBUG frame=%d Rs=%e r=%e f=%f Tstep=%f\n", frame, sim.Rs, sim.r, sim.f, dt);
 			fflush(stdout);
 		}

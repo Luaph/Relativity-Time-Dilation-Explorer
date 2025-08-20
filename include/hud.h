@@ -1,6 +1,3 @@
-// hud.h
-// HUD drawing utilities.
-
 #ifndef HUD_H
 #define HUD_H
 

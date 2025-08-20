@@ -4,19 +4,19 @@
 #include "constants.h"
 #include "DG.h"
 
-// Placeholder mesh warping utilities (not yet used in main.c)
-
 typedef struct WarpGrid {
 	Mesh mesh;
-	Vector3 *original;  // original positions
+	Vector3 *original;
 	int cols, rows;
 	float spacing;
 } WarpGrid;
 
 WarpGrid *CreateWarpGrid(int cols, int rows, float spacing)
 {
-	if (cols < 2) cols = 2;
-	if (rows < 2) rows = 2;
+	if (cols < 2)
+		cols = 2;
+	if (rows < 2)
+		rows = 2;
 	WarpGrid *wg = (WarpGrid*)calloc(1, sizeof(WarpGrid));
 	wg->cols = cols; wg->rows = rows; wg->spacing = spacing;
 	int vx = cols * rows;
@@ -28,8 +28,10 @@ WarpGrid *CreateWarpGrid(int cols, int rows, float spacing)
 	float x0 = -width/2.0f;
 	float z0 = -depth/2.0f;
 	int k = 0;
-	for (int j=0; j<rows; ++j) {
-		for (int i=0; i<cols; ++i) {
+	for (int j=0; j<rows; ++j)
+		{
+		for (int i=0; i<cols; ++i)
+		{
 			float x = x0 + i * spacing;
 			float z = z0 + j * spacing;
 			positions[k] = (Vector3){ x, 0.0f, z };
@@ -42,8 +44,10 @@ WarpGrid *CreateWarpGrid(int cols, int rows, float spacing)
 	int indicesCount = quads * 6;
 	unsigned short *indices = (unsigned short*)MemAlloc(sizeof(unsigned short) * indicesCount);
 	int id = 0;
-	for (int j=0; j<rows-1; ++j) {
-		for (int i=0; i<cols-1; ++i) {
+	for (int j=0; j<rows-1; ++j)
+		{
+		for (int i=0; i<cols-1; ++i)
+		{
 			int v0 = j*cols + i;
 			int v1 = v0 + 1;
 			int v2 = v0 + cols;
@@ -61,7 +65,8 @@ WarpGrid *CreateWarpGrid(int cols, int rows, float spacing)
 	mesh.vertexCount = vx;
 	mesh.triangleCount = quads * 2;
 	mesh.vertices = (float*)MemAlloc(sizeof(float) * 3 * vx);
-	for (int i=0; i<vx; ++i) {
+	for (int i=0; i<vx; ++i)
+	{
 		mesh.vertices[i*3+0] = positions[i].x;
 		mesh.vertices[i*3+1] = positions[i].y;
 		mesh.vertices[i*3+2] = positions[i].z;
@@ -76,9 +81,11 @@ WarpGrid *CreateWarpGrid(int cols, int rows, float spacing)
 
 void DestroyWarpGrid(WarpGrid *wg)
 {
-	if (!wg) return;
+	if (!wg)
+		return;
 	UnloadMesh(wg->mesh);
-	if (wg->original) free(wg->original);
+	if (wg->original)
+		free(wg->original);
 	free(wg);
 }
 
