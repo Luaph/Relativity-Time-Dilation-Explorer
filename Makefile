@@ -9,22 +9,23 @@ LDFLAGS = -LC:/raylib/raylib/src
 LDLIBS = -lraylib -lopengl32 -lgdi32 -lwinmm
 SRC = src/main.c src/DC.c src/DG.c src/mapping.c src/constants.c src/simulation.c src/hud.c
 
+DEL_CMD = rm -f "$(EXE)"
+
 all:
-	@echo [BUILD] $(EXE)
-	-del /Q $(EXE) 2> NUL || cmd /c exit 0
+	$(info [BUILD] $(EXE))
+	@$(DEL_CMD)
 	$(CC) $(CFLAGS) $(SRC) $(LDFLAGS) $(LDLIBS) -o $(EXE)
-	@echo Built $(EXE)
-	@dir /-C $(EXE)
+	$(info Built $(EXE))
 
 clean:
-	@echo Cleaning...
-	-del /Q $(EXE) 2> NUL || cmd /c exit 0
-	@echo Clean done
+	$(info Cleaning...)
+	@$(DEL_CMD)
+	$(info Clean done)
 
 run: all
-	@echo Running $(EXE)
+	$(info Running $(EXE))
 	$(EXE)
 
 kill:
-	@echo Killing $(EXE) if running
+	$(info Killing $(EXE) if running)
 	-taskkill /IM $(EXE) /F > NUL 2>&1 || echo Not running
